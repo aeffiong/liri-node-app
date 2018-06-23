@@ -90,5 +90,14 @@ function movieThis(){
     })
 }
 
-
+// do what is says function
+function random() {
+    fs.readFile("random.txt", "utf8", function(error, data){
+        if (error) {
+            return console.log(error);
+        }
+        random = data.split(",");
+        // for loop next
+    })
+}
 
