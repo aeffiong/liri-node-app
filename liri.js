@@ -24,7 +24,7 @@ var twitterName = {
 var queryUrl = "http://www.omdbapi.com/?t=" + userInput + "&y=&plot=short&apikey=trilogy";
 
 // console.log("LIRI is ready");
-
+logResponses();
 // create switch statements for the commands for the user to choose from
 switch (command) {
     case "my-tweets":
@@ -48,17 +48,26 @@ switch (command) {
         console.log("Choose a command to get started: my-tweets, spotify-this-song, movie-this, or do-what-it-says");
 
 }
+
 // twitter function - resulting in null :(
 function myTweets() {
+   
     client.get("search/tweets", { q: "atim38297792", count: 20 }, function (error, tweets, response) {
         if (error) {
             console.log(error);
         } else {
             for (var i = 0; i < tweets.statuses.length; i++) {
                 console.log(tweets.statuses[i].text + " on " + tweets.statuses[i].created_at);
+                fs.appendFile("log.txt", JSON.stringify(tweets.statuses[i].text) + ", ", function(error){
+                    if (error) {
+                        console.log(error)
+                    }
+                })
             }
+          
         }
     })
+   
 }
 
 // spotify function
@@ -77,6 +86,12 @@ function spotifyThis(query) {
         console.log("Preview Link: " + data.tracks.items[0].preview_url);
         console.log("Album: " + data.tracks.items[0].album.name);
         console.log("--------------------")
+        fs.appendFile("log.txt", query + ", " + data.tracks.items[0].artists[0].name + ", " +
+        data.tracks.items[0].name, function(error){
+            if (error) {
+                console.log(error)
+            }
+        })
     });
 }
 // OMDB request functions
@@ -114,6 +129,11 @@ function movieThis() {
                     console.log("Plot: " + JSON.parse(body).Plot);
                     console.log("Actors: " + JSON.parse(body).Actors);
                     console.log("-------------------------------");
+                    fs.appendFile("log.txt", movieAnswer.movieResponse + ", " + body.Title + ", " + body.Year, function(error){
+                        if (error) {
+                            console.log(error)
+                        }
+                    })
                 }
 
             })
@@ -129,7 +149,7 @@ function random() {
         }
 
         var randomChoice = data.split(",");
-        console.log(randomChoice);
+        // console.log(randomChoice);
         if (randomChoice[0] === "spotify-this-song") {
             spotifyThis(randomChoice[1]);
         }
@@ -137,3 +157,10 @@ function random() {
     })
 }
 
+function logResponses() {
+    fs.appendFile("log.txt", ", ", function(error){
+        if (error) {
+            console.log(error)
+        }
+    })
+}
